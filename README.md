@@ -1,30 +1,42 @@
-# Grocery-Shopper
-Camera &amp; lidar vision automated grocery shopper 
+# Grocery-Shopper  
+Camera & Lidar Vision Automated Grocery Shopper  
 
-----------------------------------------------------
+---
 
-Our robot implements the following features:
+## Features
 
-Autonomous Mapping :
-The robot moves autonomously capturing the whole map using its lidar sensor. Color blob detection is called simultaneously, which stores the position of the robot at the time it detects yellow or green blobs as an initial waypoint. 
+### Autonomous Mapping  
+The robot autonomously explores the environment using its lidar sensor.  
+- Simultaneously detects yellow and green color blobs.  
+- When a blob is detected, the robot stores its current GPS position as a waypoint.  
 
-Odometry :
-Once the robot reaches an initial waypoint near a cube, it repeatedly runs calculations on its bearing and position errors. These error values are fed into a proportional controller. When error values are within the threshold, the program runs manual mode for pick and place. 
+### Odometry-Based Positioning  
+- Upon reaching a waypoint, the robot calculates bearing and position errors.  
+- A proportional controller adjusts movement until errors fall within a threshold.  
+- Once aligned, control switches to manual mode for precise manipulation.  
 
-Computer Vision :
-The robot’s camera captures an image, which is retrieved as raw RGB pixel data from Webots and manually converted to a NumPy array in BGR format (as OpenCV expects BGR, not RGB). The BGR image is then converted to HSV (Hue, Saturation, Value) color space for higher accuracy (BGR threshold wasn’t working well). A binary mask is created using cv2.inRange() that filters out everything except pixels within the color range. Using cv2.findContours(), external contours are identified in the binary mask. Each contour's area is checked to filter out noise. The centroid of the blob is computed using image moments (cv2.moments()). A bounding box is drawn, and the aspect ratio of each blob is checked (should be around 1:1 for cubes). The GPS coordinates of the robot at the time of detection are recorded and stored if the centroid corresponds to a new, unique cube position (checked via a spatial threshold in a function called is_new_waypoint()). The mask and the frame are displayed using cv2.imshow(), showing detected rectangles and labeled centroids dot for real-time debugging and validation.
+### Computer Vision  
+- Captures raw RGB images from Webots and converts to BGR for OpenCV processing.  
+- Converts BGR to HSV color space for accurate color filtering.  
+- Uses `cv2.inRange()` to create a binary mask for target colors.  
+- Detects external contours and filters by area and aspect ratio.  
+- Computes blob centroids using image moments and records GPS coordinates if the blob is new.  
+- Displays real-time debug visuals using `cv2.imshow()` with bounding boxes and labels.  
 
-Navigation using RRT : 
-Homework 3 was used as a base code for the RRT algorithm. Jack built a base code to work on our map, then Anja added the obstacle avoidance logic. Algorithm takes in grid points instead of the world, making it less complex. Code converts back to world coordinates for odometry.
+### Navigation with RRT  
+- Built upon Homework 3’s RRT implementation.  
+- Grid-based sampling simplifies collision checking.  
+- Converts grid points back to world coordinates for path planning.  
+- Includes obstacle avoidance enhancements.  
 
-Manual Manipulation : 
-Keyboard input was used  to increment or decrement the robot's arm joint and torso by 0.025 radians. 
-Manual key command follows:
- - 1-7 = Raise arm joints
- - q-u = Lower arm joints
- - Z/X = Raise/Lower torso
- - D = Done with pick and place. (switches back to odometry)
- - O/C = Open/Close gripper
+### Manual Manipulation  
+Keyboard control is used to adjust robot joints and torso for pick-and-place tasks.  
 
+**Controls:**  
+- `1-7`: Raise arm joints  
+- `q-u`: Lower arm joints  
+- `Z/X`: Raise/Lower torso  
+- `O/C`: Open/Close gripper  
+- `D`: Finish manipulation and return to odometry  
 
-
+---
